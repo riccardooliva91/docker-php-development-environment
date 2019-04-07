@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  nginx-PROJECTNAME:
+    image: nginx:latest
+    container_name: PROJECTNAME-server
+    expose:
+      - 80
+    volumes:
+      - ./htdocs:/usr/share/nginx/htdocs
+      - ./nginx:/etc/nginx/conf.d
+    environment:
+      VIRTUAL_HOST: PROJECTDOMAIN
+      VIRTUAL_PORT: 80
+    links:
+      - php-PROJECTNAME
+
+  php-PROJECTNAME:
+    build:
+      context: .
+      dockerfile: php-Dockerfile
+    volumes:
+      - ./htdocs:/usr/share/nginx/htdocs
+
+  mariadb-PROJECTNAME:
+    image: mariadb:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+
+  redis-PROJECTNAME:
+    image: redis:latest
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
