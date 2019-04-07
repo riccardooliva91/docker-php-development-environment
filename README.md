@@ -52,5 +52,8 @@ If you wish to start/stop the docker instances in bulk, you can just use the `st
 ## Customiziong php extension
 There is a `php-Dockerfile` on each project you can use to add PHP extensions. If you need informations about that, you can refer to the official image documentation here: https://hub.docker.com/_/php 
 
+## NginX configuration
+The `nginx` folder contained in each project is shared with the nginx container's `/etc/nginx/conf.d` folder. The `default.conf` file should be customized in order to serve your code correctly. Of course, if you wish you can customize nginx even more. However I raccomend to keep one website/application per project in order to avoid issues with the reverse proxying.
+
 ## Refer to Redis/MariaDB
 If you need to specify the host of Redis or MariaDB in your code, you can just type in `redis-projectname` or `mariadb-projectname` where of course `projectname` is the name of the project you are working in.
