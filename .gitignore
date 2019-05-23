@@ -1,0 +1,13 @@
+*
+!*.gitignore
+!*.gitkeep
+!nginx-proxy/
+!nginx-proxy/certs/.gitkeep
+!template/
+!create.sh
+!LICENSE
+!README.md
+!start.sh
+!stop.sh
+
+
