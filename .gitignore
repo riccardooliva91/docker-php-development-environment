@@ -1,6 +1,6 @@
 *
 !*.gitignore
-!*.gitkeep
+!**/.gitkeep
 !nginx-proxy/
 !nginx-proxy/certs/.gitkeep
 !template/
