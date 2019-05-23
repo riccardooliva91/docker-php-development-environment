@@ -57,3 +57,10 @@ The `nginx` folder contained in each project is shared with the nginx container'
 
 ## Refer to Redis/MariaDB
 If you need to specify the host of Redis or MariaDB in your code, you can just type in `redis-projectname` or `mariadb-projectname` where of course `projectname` is the name of the project you are working in.
+
+## Fixing permissions
+If you are having trouble with file permissions, know that:
+* Nginx and PHP containers run with their own root users (with ID 0) and they belong to a `www-data` group (with ID 33).
+* File permissions are set outside the container, so they will refer to your ID. Probably your user GUID and the containers root GUIDs will not match, so you must sync them.
+
+There are several ways to do that. Personally, I create a `www-data` group with id `33` to match de containers default, and i add my user to it. Then I assign the `htdocs` folder to the newly created group.
