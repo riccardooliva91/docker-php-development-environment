@@ -15,6 +15,7 @@ services:
       - php-PROJECTNAME
 
   php-PROJECTNAME:
+    user: "1001:33"
     build:
       context: .
       dockerfile: php-Dockerfile
@@ -31,6 +32,7 @@ services:
 
   # You probably want to keep the container below only in production
   tools-PROJECTNAME:
+    user: "1001:33"
     build:
       context: .
       dockerfile: tools-Dockerfile
@@ -38,10 +40,12 @@ services:
       - ./htdocs:/project
     stdin_open: true
     tty: true
-    environment:
-      USER_ID: 1001
 
 networks:
   default:
     external:
       name: nginx-proxy
+
+volumes:
+  code:
+    driver: local
