@@ -1,13 +1,22 @@
 # docker-php-development-environment
-A docker setup to quickly start with your dockerized development. This setup allows you to create custom domains for your installations and to hos them on the same machine without any hussle. This setup is intended for __development__, I've never tested this on production. Hovewer this should be fine if you don't need a swarm or more advanced infrastrucutures.
+A docker setup to quickly start with your dockerized development. This setup allows you to create custom domains for 
+your installations and to hos them on the same machine without any hussle. This setup is intended for __development__, 
+I've never tested this on production. Hovewer this should be fine if you don't need a swarm or more advanced 
+infrastrucutures.
 
-This environment comes bundled with PHP, but it's generic enough to be customizable with other languages. Feedbacks/suggestions are appreciated!
+This environment comes bundled with PHP, but it's generic enough to be customizable with other languages. 
+Feedbacks/suggestions are appreciated!
 
 ## What you've got
 ### The reverse proxy
-The `nginx-proxy` folder contains a ready-to-go reverse proxy made by @jwilder (check out his work here: https://github.com/jwilder/nginx-proxy). You always need it up and running. You'll find a `cert`folder inside which contains demo self-signed SSL certifications. More information about local SSL ahead.
-Be sure to launch the proxy __before__ launching every other project. If you need information about the proxy configuration, or if you want to customize it even further, refer to the documentation in the readme of the main project (link above).
-*Before you start you will probably need to create a new network*. If that's the case just type `docker network create nginx-proxy` in a shell window.
+The `nginx-proxy` folder contains a ready-to-go reverse proxy made by @jwilder (check out his work here: 
+https://github.com/jwilder/nginx-proxy). You always need it up and running. You'll find a `cert`folder inside which 
+contains demo self-signed SSL certifications. More information about local SSL ahead.
+Be sure to launch the proxy __before__ launching every other project. If you need information about the proxy 
+configuration, or if you want to customize it even further, refer to the documentation in the readme of the main 
+project (link above).
+*Before you start you will probably need to create a new network*. If that's the case just type `docker network create 
+nginx-proxy` in a shell window.
 
 ### The `template` folder
 This is an example setup used by the `create.sh` utlility script. More information ahead.
@@ -16,15 +25,34 @@ A default project will include:
 * A customizable PHP7.3-fpm image (the soruce is the official image)
 * A MariaDB instance (official image)
 * A Redis instance (official image)
+* A linux image which includes composer and npm (the "tools")
+
+### Setting up the `user` property correctly
+If you take a look to the template's `docker-compose.yml` you'll notice that every container except Nginx comes with a 
+`user: "1001:33"` property. These numbers refer to your user id and a group id. In order to avoid permissions conflicts
+you should match the first number with your user ID (you can see it by opening a terminal and typing `id -u` or 
+`echo $UID`). THe second number doesn't really matter, because it just matches the groups of the root accounts in
+the container. If you still occur on permission issue, just add your user to a group with ID 33 (create one if needed,
+and remember to logout and login again in order for the modification to take effect). If you are in an automated context 
+and you manage everything from within the tools container, you can just skip this part.
+
+### A note about the "tools" container
+Depending on your setup, you may want to use this container only on a development environment. If that's so, just 
+delete it from the template's (or any) `docker-compose.yml`.
 
 ## Manually creating a project
-If you wish to create a new project, copy and paste the `template directory`, renaming it as you wish. Be sure to replace the `PROJECTNAME` and `PROJECTDOMAIN` placeholders in the `docker-compose.yml` file and in the `nginx/default.conf` file.
+If you wish to create a new project, copy and paste the `template directory`, renaming it as you wish. Be sure to 
+replace the `PROJECTNAME` and `PROJECTDOMAIN` placeholders in the `docker-compose.yml` file and in the 
+`nginx/default.conf` file.
 
 ## Creating a project via the `create.sh` script
-From the root folder, launch `./create.sh` and follow the instructions. You will be asked for the project name, the project domain and,if you provide sudo privileges, an entry will be added to your `/etc/hosts` file. __Don't__ launch this script as sudo, you will be propted for the password.
+From the root folder, launch `./create.sh` and follow the instructions. You will be asked for the project name, the 
+project domain and,if you provide sudo privileges, an entry will be added to your `/etc/hosts` file. __Don't__ launch 
+this script as sudo, you will be prompted for the password.
 
 ## Local domains
-In order to connect a local domain to a project's nginx instance, you need to edit the `VIRTUAL_HOST` entry under the `environment` section:
+In order to connect a local domain to a project's Nginx instance, you need to edit the `VIRTUAL_HOST` entry under the 
+`environment` section:
 ```
 nginx-example:
 image: nginx:latest
@@ -40,27 +68,30 @@ environment:
 links:
   - php-example
 ```
-You should also add a line to your `/etc/hosts` file to register your development domain. In this example it would be `127.0.0.1 example.test`
+You should also add a line to your `/etc/hosts` file to register your development domain. In this example it would be 
+`127.0.0.1 example.test`
 
 ## Local SSL
-In order to connect with SSL to your test domains, you need a `domainname.domainext.crt` and a `domainname.domainext.key` self-signed certificates in your `nginx-proxy/certs` folder. You may create them as you prefer, like using OpenSSL, the `create-ssl-certificate` npm package (https://www.npmjs.com/package/create-ssl-certificate) or online here: http://www.selfsignedcertificate.com/.
+In order to connect with SSL to your test domains, you need a `domainname.domainext.crt` and a 
+`domainname.domainext.key` self-signed certificates in your `nginx-proxy/certs` folder. You may create them as you 
+prefer, like using OpenSSL, the `create-ssl-certificate` npm package 
+(https://www.npmjs.com/package/create-ssl-certificate) or online here: http://www.selfsignedcertificate.com/.
 You will find some example files in the folder.
 
 ## Bulk start/stop
-If you wish to start/stop the docker instances in bulk, you can just use the `start.sh` and the `stop.sh` scripts. The proxy will be launched before every other project.
+If you wish to start/stop the docker instances in bulk, you can just use the `start.sh` and the `stop.sh` scripts. 
+The proxy will be launched before every other project.
 
 ## Customiziong php extension
-There is a `php-Dockerfile` on each project you can use to add PHP extensions. If you need informations about that, you can refer to the official image documentation here: https://hub.docker.com/_/php 
+There is a `php-Dockerfile` on each project you can use to add PHP extensions. If you need informations about that, you 
+can refer to the official image documentation here: https://hub.docker.com/_/php 
 
 ## NginX configuration
-The `nginx` folder contained in each project is shared with the nginx container's `/etc/nginx/conf.d` folder. The `default.conf` file should be customized in order to serve your code correctly. Of course, if you wish you can customize nginx even more. However I raccomend to keep one website/application per project in order to avoid issues with the reverse proxying.
+The `nginx` folder contained in each project is shared with the nginx container's `/etc/nginx/conf.d` folder. The 
+`default.conf` file should be customized in order to serve your code correctly. Of course, if you wish you can 
+customize nginx even more. However I raccomend to keep one website/application per project in order to avoid issues 
+with the reverse proxying.
 
 ## Refer to Redis/MariaDB
-If you need to specify the host of Redis or MariaDB in your code, you can just type in `redis-projectname` or `mariadb-projectname` where of course `projectname` is the name of the project you are working in.
-
-## Fixing permissions
-If you are having trouble with file permissions, know that:
-* Nginx and PHP containers run with their own root users (with ID 0) and they belong to a `www-data` group (with ID 33).
-* File permissions are set outside the container, so they will refer to your ID. Probably your user GUID and the containers root GUIDs will not match, so you must sync them.
-
-There are several ways to do that. Personally, I create a `www-data` group with id `33` to match de containers default, and i add my user to it. Then I assign the `htdocs` folder to the newly created group.
+If you need to specify the host of Redis or MariaDB in your code, you can just type in `redis-projectname` or 
+`mariadb-projectname` where of course `projectname` is the name of the project you are working in.
