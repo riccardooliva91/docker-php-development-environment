@@ -50,6 +50,14 @@ find "${WORKING_DIR}/${PROJECT_NAME}" -type f -not -path "*.git" -not -name "*.b
     xargs sed -i -e "s/PROJECTDOMAIN/$PROJECT_DOMAIN/g"
 echo "Replaced placeholders"
 
-echo "I need admin permissions to update your /etc/hosts file. If you want to skip it, just exit with CTRL+C"
-sudo -- sh -c -e "echo '127.0.0.1'  $PROJECT_DOMAIN >> /etc/hosts"
-echo "Updated /etc/hosts file"
+# Sudo section
+echo "From now on i'll need sudo permissions to properly setup the environment. just type 'n' or CTRL+C to exit/skip"
+
+# Hosts
+echo "Do you want to update your /etc/hosts file? [y/n]"
+read UPDATE_HOST
+if [[ "y" = "$UPDATE_HOST" ]] || [[ 'Y' = "$UPDATE_HOST" ]]
+then
+    sudo -- sh -c -e "echo '127.0.0.1'  $PROJECT_DOMAIN >> /etc/hosts"
+    echo "Updated /etc/hosts file"
+fi
