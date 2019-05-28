@@ -1,3 +1,5 @@
 FROM php:7.3-fpm
 
 RUN docker-php-ext-install mbstring pdo pdo_mysql
+
+WORKDIR /usr/share/nginx/htdocs
