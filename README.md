@@ -34,7 +34,7 @@ you should match the first number with your user ID (you can see it by opening a
 `echo $UID`). THe second number doesn't really matter, because it just matches the groups of the root accounts in
 the container. If you still occur on permission issue, just add your user to a group with ID 33 (create one if needed,
 and remember to logout and login again in order for the modification to take effect). If you are in an automated context 
-and you manage everything from within the tools container, you can just skip this part.
+and you manage everything from within the tools container, you can just skip this part. Also, if you are not facing permissions issues (which tipically occur when your linux account isn't the "default" one), just comment out or delete this line.
 
 ### A note about the "tools" container
 Depending on your setup, you may want to use this container only on a development environment. If that's so, just 
