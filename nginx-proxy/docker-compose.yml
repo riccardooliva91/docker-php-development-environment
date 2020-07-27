@@ -9,7 +9,7 @@ services:
     volumes:
       - ./certs:/etc/nginx/certs
       - /var/run/docker.sock:/tmp/docker.sock:ro
-    restart: unless-stopped
+    #restart: unless-stopped
 
 networks:
   default:
